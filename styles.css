@@ -1,95 +1,32 @@
-/* ====== Reset ====== */
-* {
+/* ===== GENERAL ===== */
+body {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-}
-
-/* ====== خلفية الموقع بالكامل ====== */
-body {
-    background: #008000;      /* أخضر */
-    color: white;
     font-family: Arial, sans-serif;
+    background: #006400; /* خلفية خضراء داكنة */
+    color: white;
     text-align: center;
 }
 
-/* ====== الهيدر ====== */
+/* ===== HEADER ===== */
 header {
-    background: #006400;      /* أخضر غامق */
-    padding: 30px 10px;
+    padding: 20px;
 }
 
-header h1 {
-    font-size: 36px;
-    font-weight: bold;
-}
-
-header p {
-    font-size: 18px;
-    opacity: 0.9;
-}
-
-/* ====== القائمة ====== */
-nav {
-    background: #004d00;      /* أخضر أغمق */
-    padding: 15px;
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-}
-
-nav a {
-    color: white;
-    font-size: 22px;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-/* ====== صورة الجوكر ====== */
-.logo-box {
-    margin-top: 20px;
-}
-
-.logo-box img {
+.logo {
     width: 160px;
     display: block;
-    margin: 0 auto;
-}
-
-/* ====== صندوق الترحيب ====== */
-.home-box {
-    background: rgba(0,0,0,0.4);  /* شفافية بسيطة */
-    padding: 30px 20px;
-    margin: 20px;
-    border-radius: 15px;
-}
-
-.home-box h2 {
-    font-size: 28px;
-}
-
-.home-box p {
-    font-size: 18px;
-    margin-top: 10px;
-}
-
-/* ====== زر Start Now ====== */
-.btn {
-    display: inline-block;
-    background: red;
-    padding: 15px 35px;
-    color: white;
-    font-size: 22px;
-    font-weight: bold;
+    margin: 0 auto 10px auto;
     border-radius: 10px;
-    margin-top: 20px;
-    text-decoration: none;
 }
 
-/* ====== الفوتر ====== */
-footer {
-    margin-top: 40px;
-    padding: 15px;
-    color: white;
-    opacity: 0.8;
+h1 {
+    font-size: 32px;
+    margin: 5px 0;
 }
+
+/* ===== NAVIGATION ===== */
+nav {
+    background: #004d00; 
+    padding: 15px;
+    display: flex
