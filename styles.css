@@ -1,32 +1,136 @@
-/* ===== GENERAL ===== */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background: #006400; /* خلفية خضراء داكنة */
-    color: white;
-    text-align: center;
+/* ---- GENERAL ---- */
+* {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-/* ===== HEADER ===== */
-header {
-    padding: 20px;
+body {
+  margin: 0;
+  background: #0b6b1d; /* الأخضر الرئيسي */
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2 {
+  margin: 0;
+}
+
+/* ---- HEADER ---- */
+.hero {
+  text-align: center;
+  padding: 28px 12px;
+}
+
+.hero.small {
+  padding: 20px 12px;
 }
 
 .logo {
-    width: 160px;
-    display: block;
-    margin: 0 auto 10px auto;
-    border-radius: 10px;
+  width: 160px;
+  height: auto;
+  display: block;
+  margin: 0 auto 10px;
 }
 
-h1 {
-    font-size: 32px;
-    margin: 5px 0;
+.logo.small {
+  width: 110px;
 }
 
-/* ===== NAVIGATION ===== */
-nav {
-    background: #004d00; 
-    padding: 15px;
-    display: flex
+.sub {
+  opacity: 0.9;
+  font-size: 18px;
+}
+
+/* ---- NAVIGATION ---- */
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(0,0,0,0.25);
+  padding: 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  padding: 6px 20px;
+  border-radius: 6px;
+}
+
+.nav a:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+/* ---- MAIN CONTAINER ---- */
+.container {
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.card {
+  background: transparent;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+/* ---- INPUTS ---- */
+input {
+  width: 100%;
+  padding: 14px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: none;
+  margin: 10px 0;
+  outline: none;
+}
+
+/* ---- BUTTON ---- */
+.btn {
+  background: #ff2b2b;
+  color: #fff;
+  padding: 12px 26px;
+  border-radius: 12px;
+  border: none;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #cc0000;
+}
+
+.btn.danger {
+  background: #b80d0d;
+}
+
+/* ---- MISC ---- */
+hr {
+  border: none;
+  height: 1px;
+  background: rgba(255,255,255,0.2);
+  margin: 25px 0;
+}
+
+.info {
+  text-align: left;
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+@media(min-width: 700px) {
+  h1 {
+    font-size: 48px;
+  }
+  
+  .logo {
+    width: 180px;
+  }
+}
