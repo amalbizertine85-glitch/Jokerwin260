@@ -93,3 +93,21 @@ form .btn {
     width: 80%;
     max-width: 300px;
 }
+/* ===== Dashboard List ===== */
+.admin-list {
+    text-align: left;
+    display: inline-block;
+    margin-top: 15px;
+    font-size: 18px;
+    line-height: 40px;
+}
+
+.admin-list li {
+    list-style: none;
+    margin: 5px 0;
+    padding: 8px 15px;
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 8px;
+    color: #fff;
+    text-shadow: 0 0 3px black;
+}
