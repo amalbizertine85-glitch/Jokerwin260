@@ -8,18 +8,24 @@
 </head>
 <body>
 
-<header>
-    <h1>🔐 Login</h1>
+<header class="site-header">
+    <h1>Login</h1>
+    <p>Access your account</p>
 </header>
 
-<section class="home-box">
-    <h2>Welcome Back!</h2>
-    <p>Please login to continue</p>
+<nav>
+    <a href="index.html">Home</a>
+    <a href="login.html">Login</a>
+    <a href="dashboard.html">Dashboard</a>
+</nav>
 
-    <form style="margin-top: 25px;">
-        <input type="text" placeholder="Username" style="padding:10px;width:80%;margin-bottom:10px;"><br>
-        <input type="password" placeholder="Password" style="padding:10px;width:80%;margin-bottom:10px;"><br>
-        <button style="padding:10px 25px;background:red;color:white;border:none;border-radius:6px;">Login</button>
+<section class="home-box">
+    <h2>🔐 Please Login</h2>
+
+    <form style="margin-top: 20px;">
+        <input type="text" placeholder="Username" class="input-field"><br>
+        <input type="password" placeholder="Password" class="input-field"><br>
+        <button class="btn" type="submit">Login</button>
     </form>
 </section>
 
