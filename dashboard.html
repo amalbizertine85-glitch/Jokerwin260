@@ -1,58 +1,58 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Jokerwin365 - Dashboard</title>
-<link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
 
-  <header class="hero small">
-    <img src="joker.png" class="logo small" />
-    <h1 id="dashTitle">Dashboard</h1>
-  </header>
+<h1 style="text-align:center; color:white;">Dashboard</h1>
 
-  <nav class="nav">
-    <a href="index.html">Home</a>
-    <a href="index.html#login">Login</a>
-  </nav>
+<div class="box">
+    <h2 id="welcome"></h2>
+    <p>Balance: <span id="balance"></span> 💰</p>
 
-  <main class="container">
+    <input id="addAmount" type="number" placeholder="Amount to Add">
+    <a class="btn" onclick="addBalance()">Add Balance</a>
 
-    <section class="card">
-      <h2>Welcome, <span id="dUser"></span></h2>
+    <a class="btn" style="background:red;" onclick="logout()">Logout</a>
+</div>
 
-      <div class="info">
-        <p><strong>Balance:</strong> <span id="dBalance">0</span> TD</p>
-        <p><strong>Games:</strong> Slots • Amatic • Pragmatic</p>
-      </div>
-
-      <button id="logoutBtn" class="btn danger">Logout</button>
-    </section>
-
-  </main>
+<script src="script.js"></script>
 
 <script>
-// تمنع دخول لوحة التحكم بدون تسجيل دخول
-(function(){
-    const session = localStorage.getItem("joker_user");
-    if(!session){
-        location.href = "index.html#login";
+async function load() {
+    let user = localStorage.getItem("logged");
+    if (!user) {
+        window.location.href = "login.html";
         return;
     }
 
-    const user = JSON.parse(session);
+    let users = await getUsers();
+    let data = users[user];
 
-    document.getElementById("dUser").textContent = user.username;
-    document.getElementById("dashTitle").textContent = user.username + " - Dashboard";
+    document.getElementById("welcome").innerText = "Welcome, " + user;
+    document.getElementById("balance").innerText = data.balance;
+}
 
-    document.getElementById("logoutBtn").onclick = () => {
-        localStorage.removeItem("joker_user");
-        location.href = "index.html";
-    };
-})();
+async function addBalance() {
+    let amount = Number(document.getElementById("addAmount").value);
+    let user = localStorage.getItem("logged");
+    let users = await getUsers();
+
+    users[user].balance += amount;
+
+    await saveUsers(users);
+    load();
+}
+
+function logout() {
+    localStorage.removeItem("logged");
+    window.location.href = "login.html";
+}
+
+load();
 </script>
 
 </body>
