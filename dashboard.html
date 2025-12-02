@@ -4,40 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Jokerwin260</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: #004d00;
+            font-family: Arial, sans-serif;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 { margin-bottom: 20px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            color: white;
+        }
+
+        th, td {
+            border: 1px solid white;
+            padding: 10px;
+            font-size: 18px;
+        }
+
+        th {
+            background: #006600;
+        }
+
+        .logout {
+            background: red;
+            padding: 10px 20px;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
 
-<header class="site-header">
-    <h1>
-    <img src="joker.png" alt="Joker Logo" style="height:50px; vertical-align:middle; margin-right:10px;">
-    Dashboard
-</h1>
-    <p>Control Panel</p>
-</header>
+    <h1>Users Dashboard</h1>
+    <p>All registered users:</p>
 
-<nav>
-    <a href="index.html">Home</a>
-    <a href="login.html">Login</a>
-    <a href="dashboard.html">Dashboard</a>
-</nav>
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Password</th>
+            </tr>
+        </thead>
+        <tbody id="usersTable"></tbody>
+    </table>
 
-<section class="home-box">
-    <h2>📊 Admin Tools</h2>
+    <br>
+    <a href="login.html" class="logout">Logout</a>
 
-    <ul class="admin-list">
-        <li>✔️ Add Player</li>
-        <li>✔️ Remove Player</li>
-        <li>✔️ Add Balance</li>
-        <li>✔️ Remove Balance</li>
-        <li>✔️ Player History</li>
-        <li>✔️ Settings</li>
-    </ul>
-</section>
+<script>
 
-<footer>
-    <p>© 2025 Jokerwin260</p>
-</footer>
+const BIN_ID = "692eeefbae596e708f7e9e72"; 
+const API_KEY = "$2a$10$xo7737I0Lvf2A45pzw7K..3BIsLkwG.e1/T3dmI4UEQCFOR040je.2";
+
+// ===== FETCH USERS ======
+async function getUsers() {
+    let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+        headers: { "X-Master-Key": API_KEY }
+    });
+    let data = await res.json();
+    return data.record;
+}
+
+// ===== DISPLAY USERS =====
+async function loadUsers() {
+    let users = await getUsers();
+    let table = document.getElementById("usersTable");
+
+    table.innerHTML = "";
+
+    users.forEach(u => {
+        table.innerHTML += `
+            <tr>
+                <td>${u.username}</td>
+                <td>${u.password}</td>
+            </tr>
+        `;
+    });
+}
+
+loadUsers();
+
+</script>
 
 </body>
 </html>
