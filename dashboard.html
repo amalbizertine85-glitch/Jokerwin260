@@ -1,392 +1,199 @@
-<!doctype html>
-<html lang="ar">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard — Jokerwin</title>
-  <style>
-    :root{
-      --bg:#0b3d12;
-      --card:#083a0f;
-      --accent:#ff2f2f;
-      --text:#ffffff;
-      --muted:#cbd5c2;
-    }
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-      background:var(--bg);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-    }
-    header{
-      padding:20px;
-      text-align:center;
-      border-bottom:1px solid rgba(255,255,255,0.05);
-    }
-    header h1{ margin:0; font-size:22px; letter-spacing:1px; }
-    .wrap{
-      max-width:1100px;
-      margin:18px auto;
-      padding:16px;
-    }
-    .grid{
-      display:grid;
-      grid-template-columns: 360px 1fr;
-      gap:16px;
-    }
-    .card{
-      background:var(--card);
-      border-radius:12px;
-      padding:14px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-    }
-
-    /* left column */
-    .user-list{ max-height:420px; overflow:auto; padding:6px; }
-    .user-row{
-      display:flex; align-items:center; justify-content:space-between;
-      padding:10px; border-radius:8px; margin-bottom:8px;
-      background:rgba(0,0,0,0.15);
-    }
-    .user-row .name{ font-weight:700; }
-    .user-row .bal{ font-weight:700; color:var(--muted); }
-
-    label{ display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
-    input[type="text"], input[type="number"], select{
-      width:100%; padding:10px; border-radius:8px; border: none;
-      box-sizing:border-box; font-size:16px; margin-bottom:10px;
-    }
-
-    .controls{ display:flex; gap:8px; align-items:center; margin-bottom:12px; }
-    .controls button{
-      padding:10px 14px; border-radius:8px; border:none; cursor:pointer;
-      background:var(--accent); color:white; font-weight:700;
-    }
-    .muted{ color:var(--muted); font-size:13px; }
-
-    /* right column */
-    .stat-row{ display:flex; gap:12px; margin-bottom:12px; }
-    .stat{
-      flex:1; background:rgba(0,0,0,0.18); padding:12px; border-radius:10px;
-      text-align:center;
-    }
-    .stat .v{ font-size:20px; font-weight:800; }
-    .history-table{ width:100%; border-collapse:collapse; margin-top:10px; }
-    .history-table thead th{ text-align:left; padding:10px; color:var(--muted); font-size:13px; }
-    .history-table tbody tr{ background:rgba(0,0,0,0.12); }
-    .history-table tbody td{ padding:10px; border-top:1px solid rgba(255,255,255,0.03); }
-
-    .small{ font-size:12px; color:var(--muted); }
-    .right { text-align:right; }
-
-    footer{ text-align:center; color:var(--muted); margin-top:20px; font-size:13px; }
-    .danger{ background:#9b1b1b; }
-    .ok{ background:#1b7a1b; }
-
-    .btn { padding:8px 12px; border-radius:8px; border:none; cursor:pointer; background:#1b7a1b; color:white; font-weight:700; }
-    .btn.danger{ background:#b83232; }
-
-    @media (max-width:900px){
-      .grid{ grid-template-columns: 1fr; }
-    }
-
-    /* small user view */
-    .player-card { max-width:520px; margin: 18px auto; text-align:center; }
-    .player-card .big { font-size:40px; font-weight:900; margin:12px 0; }
-  </style>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+<style>
+body {
+  background: #063b0d;
+  font-family: Arial;
+  color: white;
+  padding: 20px;
+}
+.box {
+  background: #0d5f18;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+input, select {
+  width: 95%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  margin: 5px 0;
+}
+button {
+  width: 100%;
+  padding: 12px;
+  background: #d11;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 18px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+table {
+  width: 100%;
+  margin-top: 15px;
+  border-collapse: collapse;
+}
+td, th {
+  padding: 10px;
+  border-bottom: 1px solid #ffffff44;
+}
+</style>
 </head>
+
 <body>
-  <header>
-    <h1>Jokerwin — Admin Dashboard</h1>
-    <div class="small">Manage users, deposit/withdraw and view history</div>
-  </header>
 
-  <div class="wrap" id="mainWrap">
-    <!-- content injected by JS -->
-  </div>
+<h2>Admin Dashboard</h2>
 
-  <footer id="pageFooter" style="display:none;">Jokerwin Admin • JSONBin-powered</footer>
+<div class="box">
+  <h3>Manage Balance</h3>
+
+  <select id="userSelect"></select>
+
+  <input id="amount" type="number" placeholder="Amount">
+
+  <button onclick="deposit()">Add Balance</button>
+  <button onclick="withdraw()">Withdraw Balance</button>
+
+  <h3>Current Balance</h3>
+  <div id="currentBalance">Select a user</div>
+</div>
+
+<div class="box">
+  <h3>Operations Historique</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Type</th>
+        <th>Amount</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody id="historyTable"></tbody>
+  </table>
+</div>
 
 <script>
-/* ============================
-  CONFIG — BIN_ID & API_KEY
-  (مضمّنين كما طلبت)
-============================ */
 const BIN_ID = "692eeefbae596e708f7e9e72";
 const API_KEY = "$2a$10$hCALb9EdUjLfi38M4RhCMOdm8.1y36yYtLvW0BYdZTfqjpHtlAY7S";
-const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
-// local DB cache
-let DB = { users: {}, history: [] };
+// ------------------------
 
-// helpers
-function nowISO(){ return new Date().toISOString(); }
-function formatDate(iso){ const d = new Date(iso); return d.toLocaleString(); }
-function currency(x){ return Number(x||0).toFixed(2); }
-
-// Fetch DB from JSONBin
-async function loadDB(){
-  try {
-    const r = await fetch(API_URL, { headers: { "X-Master-Key": API_KEY } });
-    if(!r.ok) throw new Error("Fetch failed: " + r.status);
-    const res = await r.json();
-    DB = res.record || { users: {}, history: [] };
-    DB.users = DB.users || {};
-    DB.history = DB.history || [];
-  } catch(e){
-    console.error("loadDB error", e);
-    DB = { users: {}, history: [] };
-  }
+async function getData() {
+  let r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+    headers: {"X-Master-Key": API_KEY}
+  });
+  let data = await r.json();
+  return data.record;
 }
 
-// Save DB to JSONBin
-async function saveDB(){
-  try {
-    const r = await fetch(API_URL, {
-      method: "PUT",
-      headers: { "Content-Type":"application/json", "X-Master-Key": API_KEY },
-      body: JSON.stringify(DB)
-    });
-    if(!r.ok) throw new Error("Save failed: " + r.status);
-    const res = await r.json();
-    return res;
-  } catch(e){
-    console.error("saveDB error", e);
-    alert("خطأ في حفظ البيانات. تأكد من BIN_ID و API_KEY");
-    throw e;
-  }
+async function saveData(data) {
+  await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Master-Key": API_KEY
+    },
+    body: JSON.stringify(data)
+  });
 }
 
-// Render admin UI
-function renderAdminUI(){
-  document.getElementById('pageFooter').style.display='block';
-  const wrap = document.getElementById('mainWrap');
-  wrap.innerHTML = `
-    <div class="grid">
-      <div>
-        <div class="card">
-          <h3 style="margin-top:0">Users</h3>
-          <label>Search user</label>
-          <input id="searchUser" type="text" placeholder="username..." />
-          <div class="user-list" id="userList"></div>
-        </div>
+async function load() {
+  let db = await getData();
+  let users = db.users;
 
-        <div style="height:12px"></div>
+  let select = document.getElementById("userSelect");
+  select.innerHTML = "";
 
-        <div class="card">
-          <h3 style="margin-top:0">Quick Actions</h3>
-          <label>Choose user</label>
-          <select id="selectedUser" style="width:100%"></select>
-          <label>Amount</label>
-          <input id="amount" type="number" placeholder="amount" />
-          <div class="controls">
-            <button id="btnDeposit" class="btn">Deposit</button>
-            <button id="btnWithdraw" class="btn danger">Withdraw</button>
-            <button id="btnRefresh" class="btn">Refresh</button>
-          </div>
-          <div style="height:8px"></div>
-          <label>Create test user</label>
-          <input id="newUserInput" placeholder="username" />
-          <button id="btnCreateTest" class="btn">Create user</button>
-          <div class="muted" style="margin-top:8px">Users are stored in JSONBin.</div>
-        </div>
-      </div>
-
-      <div>
-        <div class="card">
-          <div class="stat-row">
-            <div class="stat"><div class="small">Total Users</div><div class="v" id="statUsers">0</div></div>
-            <div class="stat"><div class="small">Total Deposited</div><div class="v" id="statDeposits">0</div></div>
-            <div class="stat"><div class="small">Total Withdrawn</div><div class="v" id="statWithdraws">0</div></div>
-          </div>
-
-          <h3 style="margin:8px 0">Recent History</h3>
-          <table class="history-table" id="historyTable">
-            <thead><tr><th>User</th><th>Type</th><th class="right">Amount</th><th>Date</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-
-        <div style="height:12px"></div>
-
-        <div class="card">
-          <h3 style="margin-top:0">Admin Tools</h3>
-          <button id="btnExport" class="btn">Export history CSV</button>
-          <button id="btnClearHistory" class="btn danger">Clear history (careful)</button>
-        </div>
-      </div>
-    </div>
-  `;
-
-  // attach events after render
-  document.getElementById("searchUser").addEventListener("input",(e)=> renderUsersList(e.target.value.trim()));
-  document.getElementById("btnDeposit").addEventListener("click", async ()=>{
-    const u = document.getElementById("selectedUser").value;
-    const amt = Number(document.getElementById("amount").value);
-    if(!u || !amt){ alert("Select user & amount"); return; }
-    if(!confirm(`Deposit ${currency(amt)} to ${u}?`)) return;
-    await depositTo(u, amt); alert("Done");
-  });
-  document.getElementById("btnWithdraw").addEventListener("click", async ()=>{
-    const u = document.getElementById("selectedUser").value;
-    const amt = Number(document.getElementById("amount").value);
-    if(!u || !amt){ alert("Select user & amount"); return; }
-    if(!confirm(`Withdraw ${currency(amt)} from ${u}?`)) return;
-    await withdrawFrom(u, amt); alert("Done");
-  });
-  document.getElementById("btnRefresh").addEventListener("click", refreshAll);
-  document.getElementById("btnCreateTest").addEventListener("click", async ()=>{
-    const v = document.getElementById("newUserInput").value.trim();
-    if(!v){ alert("Enter username"); return; }
-    if(DB.users[v]){ alert("User exists"); return; }
-    DB.users[v] = { password:"", balance:0 };
-    DB.history.push({ user:v, type:"deposit", amount:0, date: nowISO(), note:"created" });
-    await saveDB(); await refreshAll();
-    alert("User created");
-  });
-  document.getElementById("btnExport").addEventListener("click", ()=> exportCSV());
-  document.getElementById("btnClearHistory").addEventListener("click", async ()=>{
-    if(!confirm("Clear history? This action cannot be undone.")) return;
-    DB.history = []; await saveDB(); await refreshAll(); alert("History cleared");
+  Object.keys(users).forEach(user => {
+    if (user !== "admin") {
+      select.innerHTML += `<option>${user}</option>`;
+    }
   });
 
-  // initial populate
-  renderUsersList("");
-  renderHistory();
+  updateBalance();
+  loadHistory();
 }
 
-// Render player (non-admin) view
-function renderPlayerUI(username){
-  const wrap = document.getElementById('mainWrap');
-  const bal = DB.users[username] ? DB.users[username].balance || 0 : 0;
-  wrap.innerHTML = `
-    <div class="player-card card">
-      <h2>Welcome, <strong>${username}</strong></h2>
-      <div class="big">${currency(bal)} TD</div>
-      <div class="muted">This is your player view. For admin tools, login as <strong>admin</strong>.</div>
-      <div style="height:12px"></div>
-      <button class="btn" id="btnLogout">Logout</button>
-    </div>
-  `;
-  document.getElementById("btnLogout").addEventListener("click", ()=>{ localStorage.removeItem("logged"); location.href="login.html"; });
+async function updateBalance() {
+  let db = await getData();
+  let user = document.getElementById("userSelect").value;
+  let bal = db.users[user].balance;
+
+  document.getElementById("currentBalance").innerHTML = bal + " TD";
 }
 
-// populate users list
-function renderUsersList(filter=""){
-  const list = document.getElementById("userList");
-  list.innerHTML = "";
-  const keys = Object.keys(DB.users).sort((a,b)=>a.localeCompare(b));
-  let count=0;
-  for(const u of keys){
-    if(filter && !u.includes(filter)) continue;
-    count++;
-    const div = document.createElement("div");
-    div.className="user-row";
-    div.innerHTML = `<div><div class="name">${u}</div><div class="small">balance: ${currency(DB.users[u].balance||0)}</div></div>
-                     <div><div class="bal">${currency(DB.users[u].balance||0)}</div></div>`;
-    div.addEventListener("click", ()=> { document.getElementById("selectedUser").value = u; });
-    list.appendChild(div);
-  }
-  document.getElementById("statUsers").textContent = Object.keys(DB.users).length;
-  if(count===0) list.innerHTML = '<div class="small muted">No users found</div>';
-  populateSelect();
+async function deposit() {
+  let db = await getData();
+  let user = userSelect.value;
+  let amount = Number(document.getElementById("amount").value);
+
+  if (amount <= 0) return alert("Invalid amount");
+
+  db.users[user].balance += amount;
+
+  db.history.push({
+    user: user,
+    type: "Deposit",
+    amount: amount,
+    date: new Date().toLocaleString()
+  });
+
+  await saveData(db);
+  updateBalance();
+  loadHistory();
+  alert("Balance added");
 }
 
-// populate select
-function populateSelect(){
-  const sel = document.getElementById("selectedUser");
-  if(!sel) return;
-  const cur = sel.value;
-  sel.innerHTML = "";
-  const keys = Object.keys(DB.users).sort((a,b)=>a.localeCompare(b));
-  for(const u of keys){
-    const o = document.createElement("option");
-    o.value = u; o.textContent = `${u} — ${currency(DB.users[u].balance||0)}`;
-    sel.appendChild(o);
-  }
-  if(keys.includes(cur)) sel.value = cur;
+async function withdraw() {
+  let db = await getData();
+  let user = userSelect.value;
+  let amount = Number(document.getElementById("amount").value);
+
+  if (amount <= 0) return alert("Invalid amount");
+  if (db.users[user].balance < amount) return alert("Not enough balance");
+
+  db.users[user].balance -= amount;
+
+  db.history.push({
+    user: user,
+    type: "Withdraw",
+    amount: amount,
+    date: new Date().toLocaleString()
+  });
+
+  await saveData(db);
+  updateBalance();
+  loadHistory();
+  alert("Balance withdrawn");
 }
 
-// render history table
-function renderHistory(){
-  const tbody = document.querySelector("#historyTable tbody");
-  if(!tbody) return;
-  tbody.innerHTML = "";
-  const rows = DB.history.slice().reverse();
-  let sumDep=0, sumWith=0;
-  for(const h of rows){
-    const tr = document.createElement("tr");
-    const typeLabel = h.type === "deposit" ? "Deposit" : (h.type==="withdraw" ? "Withdraw":"?");
-    tr.innerHTML = `<td>${h.user}</td><td>${typeLabel}</td><td class="right">${currency(h.amount)}</td><td>${formatDate(h.date)}</td>`;
-    tbody.appendChild(tr);
-    if(h.type==="deposit") sumDep += Number(h.amount||0);
-    if(h.type==="withdraw") sumWith += Number(h.amount||0);
-  }
-  document.getElementById("statDeposits").textContent = currency(sumDep);
-  document.getElementById("statWithdraws").textContent = currency(sumWith);
+async function loadHistory() {
+  let db = await getData();
+  let table = document.getElementById("historyTable");
+  table.innerHTML = "";
+
+  db.history.slice().reverse().forEach(op => {
+    table.innerHTML += `
+      <tr>
+        <td>${op.user}</td>
+        <td>${op.type}</td>
+        <td>${op.amount} TD</td>
+        <td>${op.date}</td>
+      </tr>
+    `;
+  });
 }
 
-// deposit
-async function depositTo(user, amount){
-  amount = Number(amount);
-  if(!user || isNaN(amount) || amount<=0){ alert("Amount must be > 0"); return; }
-  DB.users[user] = DB.users[user] || { password:"", balance:0 };
-  DB.users[user].balance = Number(DB.users[user].balance || 0) + amount;
-  DB.history.push({ user, type:"deposit", amount, date: nowISO() });
-  await saveDB();
-  await refreshAll();
-}
-
-// withdraw
-async function withdrawFrom(user, amount){
-  amount = Number(amount);
-  if(!user || isNaN(amount) || amount<=0){ alert("Amount must be > 0"); return; }
-  DB.users[user] = DB.users[user] || { password:"", balance:0 };
-  if((DB.users[user].balance || 0) < amount){ alert("Not enough balance"); return; }
-  DB.users[user].balance = Number(DB.users[user].balance || 0) - amount;
-  DB.history.push({ user, type:"withdraw", amount, date: nowISO() });
-  await saveDB();
-  await refreshAll();
-}
-
-// refresh everything
-async function refreshAll(){
-  await loadDB();
-  // determine current session
-  const cur = localStorage.getItem("logged");
-  if(cur === "admin"){
-    renderAdminUI();
-  } else if (cur){
-    renderPlayerUI(cur);
-  } else {
-    // not logged
-    alert("Please login as admin to access this page.");
-    location.href = "login.html";
-    return;
-  }
-  renderHistory();
-}
-
-// export CSV
-function exportCSV(){
-  const rows = [["user","type","amount","date"]];
-  for(const h of DB.history){
-    rows.push([h.user, h.type, h.amount, h.date]);
-  }
-  const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(",")).join("\n");
-  const blob = new Blob([csv], {type:"text/csv"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a"); a.href = url; a.download = "history.csv"; a.click();
-  URL.revokeObjectURL(url);
-}
-
-// init
-(async function init(){
-  // ensure BIN set
-  if(BIN_ID.includes("###") || API_KEY.includes("###")){ alert("Please set BIN_ID/API_KEY in the file"); return; }
-  await refreshAll();
-})();
+document.getElementById("userSelect").addEventListener("change", updateBalance);
+load();
 </script>
+
 </body>
 </html>
