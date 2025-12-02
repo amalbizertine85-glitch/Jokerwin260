@@ -1,99 +1,58 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Jokerwin260</title>
-    <style>
-        body {
-            background: #004d00;
-            font-family: Arial, sans-serif;
-            color: white;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-
-        h1 { margin-bottom: 20px; }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            color: white;
-        }
-
-        th, td {
-            border: 1px solid white;
-            padding: 10px;
-            font-size: 18px;
-        }
-
-        th {
-            background: #006600;
-        }
-
-        .logout {
-            background: red;
-            padding: 10px 20px;
-            color: white;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 18px;
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Jokerwin365 - Dashboard</title>
+<link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
 
-    <h1>Users Dashboard</h1>
-    <p>All registered users:</p>
+  <header class="hero small">
+    <img src="joker.png" class="logo small" />
+    <h1 id="dashTitle">Dashboard</h1>
+  </header>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>Password</th>
-            </tr>
-        </thead>
-        <tbody id="usersTable"></tbody>
-    </table>
+  <nav class="nav">
+    <a href="index.html">Home</a>
+    <a href="index.html#login">Login</a>
+  </nav>
 
-    <br>
-    <a href="login.html" class="logout">Logout</a>
+  <main class="container">
+
+    <section class="card">
+      <h2>Welcome, <span id="dUser"></span></h2>
+
+      <div class="info">
+        <p><strong>Balance:</strong> <span id="dBalance">0</span> TD</p>
+        <p><strong>Games:</strong> Slots • Amatic • Pragmatic</p>
+      </div>
+
+      <button id="logoutBtn" class="btn danger">Logout</button>
+    </section>
+
+  </main>
 
 <script>
+// تمنع دخول لوحة التحكم بدون تسجيل دخول
+(function(){
+    const session = localStorage.getItem("joker_user");
+    if(!session){
+        location.href = "index.html#login";
+        return;
+    }
 
-const BIN_ID = "692eeefbae596e708f7e9e72"; 
-const API_KEY = "$2a$10$xo7737I0Lvf2A45pzw7K..3BIsLkwG.e1/T3dmI4UEQCFOR040je.2";
+    const user = JSON.parse(session);
 
-// ===== FETCH USERS ======
-async function getUsers() {
-    let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-        headers: { "X-Master-Key": API_KEY }
-    });
-    let data = await res.json();
-    return data.record;
-}
+    document.getElementById("dUser").textContent = user.username;
+    document.getElementById("dashTitle").textContent = user.username + " - Dashboard";
 
-// ===== DISPLAY USERS =====
-async function loadUsers() {
-    let users = await getUsers();
-    let table = document.getElementById("usersTable");
-
-    table.innerHTML = "";
-
-    users.forEach(u => {
-        table.innerHTML += `
-            <tr>
-                <td>${u.username}</td>
-                <td>${u.password}</td>
-            </tr>
-        `;
-    });
-}
-
-loadUsers();
-
+    document.getElementById("logoutBtn").onclick = () => {
+        localStorage.removeItem("joker_user");
+        location.href = "index.html";
+    };
+})();
 </script>
 
 </body>
