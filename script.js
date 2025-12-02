@@ -57,3 +57,27 @@ async function register() {
     await saveUsers(users);
     alert("✔️ Account created!");
 }
+async function createNewUser() {
+    let u = document.getElementById("newUser").value.trim();
+    let p = document.getElementById("newPass").value.trim();
+
+    if (!u || !p) {
+        alert("Please fill all fields.");
+        return;
+    }
+
+    let users = await getUsers();
+
+    if (users[u]) {
+        alert("Username already exists!");
+        return;
+    }
+
+    users[u] = {
+        password: p,
+        balance: 0
+    };
+
+    await saveUsers(users);
+    alert("Account created!");
+}
