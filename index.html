@@ -1,30 +1,47 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jokerwin260 - Home</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Jokerwin365 - Login</title>
+<link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
 
-<header>
-    <img src="joker.png" alt="Joker Logo" class="logo">
-    <h1>Jokerwin260</h1>
-    <p>Welcome to the official website</p>
-</header>
+  <header class="hero">
+    <img src="joker.png" alt="Joker" class="logo" />
+    <h1>Jokerwin365</h1>
+    <p class="sub">Welcome to the official betting system</p>
+  </header>
 
-<nav>
+  <nav class="nav">
     <a href="index.html">Home</a>
-    <a href="login.html">Login</a>
-</nav>
+    <a href="#login">Login</a>
+    <a href="dashboard.html">Dashboard</a>
+  </nav>
 
-<section class="home-box">
-    <h2>🔥 Welcome to Jokerwin260</h2>
-    <p>Your platform for online fun and games.</p>
-    <a class="btn" href="login.html">Start Now</a>
-</section>
+  <main class="container">
+
+    <section id="login" class="card">
+      <h2>Sign In</h2>
+      <input id="username" placeholder="Username" />
+      <input id="password" type="password" placeholder="Password" />
+      <button id="btnLogin" class="btn">Login</button>
+    </section>
+
+    <hr/>
+
+    <section id="register" class="card">
+      <h2>Create Account</h2>
+      <input id="newuser" placeholder="New Username" />
+      <input id="newpass" type="password" placeholder="New Password" />
+      <button id="btnRegister" class="btn">Create Account</button>
+    </section>
+
+  </main>
+
+<script src="script.js"></script>
 
 </body>
 </html>
