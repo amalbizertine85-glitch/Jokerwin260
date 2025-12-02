@@ -1,107 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Jokerwin260</title>
+    <title>Login</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
 
-<header>
-    <img src="joker.png" class="logo">
-    <h1>Login</h1>
-</header>
+    <img src="joker.png" style="width:180px; display:block; margin:20px auto;">
 
-<div class="home-box">
-    <h2>Sign In</h2>
+    <h1 style="text-align:center; color:white;">Login</h1>
 
-    <input id="username" type="text" placeholder="Username" class="input">
-    <input id="password" type="password" placeholder="Password" class="input">
+    <div class="box">
 
-    <a class="btn" onclick="login()">Login</a>
+        <h2>Sign In</h2>
+        <input id="username" type="text" placeholder="Username">
+        <input id="password" type="password" placeholder="Password">
+        <a class="btn" onclick="login()">Login</a>
 
-    <hr style="margin:20px; opacity:0.3;">
+        <hr>
 
-    <h2>Create Account</h2>
-    <input id="newuser" type="text" placeholder="New Username" class="input">
-    <input id="newpass" type="password" placeholder="New Password" class="input">
+        <h2>Create Account</h2>
+        <input id="newuser" type="text" placeholder="New Username">
+        <input id="newpass" type="password" placeholder="New Password">
+        <a class="btn" onclick="register()">Create Account</a>
 
-    <a class="btn" onclick="register()">Create Account</a>
-</div>
+    </div>
 
-<script>
-const BIN_ID = "692eeefbae596e708f7e9e72";  // ضع ID
-const API_KEY = "$2a$10$xo7737I0Lvf2A45pzw7K..3BIsLkwG.e1/T3dmI4UEQCFOR040je.2"; // ضع API KEY
+    <script src="script.js"></script>
 
-// ======= FETCH USERS ========
-async function getUsers() {
-    let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-        headers: { "X-Master-Key": API_KEY }
-    });
-    let data = await res.json();
-    return data.record;
-}
-
-// ======= SAVE USERS ========
-async function saveUsers(users) {
-    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "X-Master-Key": API_KEY
-        },
-        body: JSON.stringify(users)
-    });
-}
-
-// ======= LOGIN ========
-async function login() {
-    let u = document.getElementById("username").value;
-    let p = document.getElementById("password").value;
-
-    let users = await getUsers();
-
-    if (users[u] && users[u].password === p) {
-        localStorage.setItem("logged", u);
-        alert("Login successful!");
-        window.location.href = "dashboard.html";
-    } else {
-        alert("Wrong username or password!");
-    }
-}
-
-// ======= REGISTER ========
-async function register() {
-    let u = document.getElementById("newuser").value;
-    let p = document.getElementById("newpass").value;
-
-    let users = await getUsers();
-
-    if (users[u]) {
-        alert("❌ Username already exists!");
-        return;
-    }
-
-    users[u] = { password: p, balance: 0 };
-
-    await saveUsers(users);
-
-    alert("Account created!");
-}
-</script>
-
-<style>
-.input {
-    width: 80%;
-    padding: 12px;
-    margin: 10px auto;
-    border-radius: 10px;
-    border: none;
-    font-size: 18px;
-}
-</style>
-<script src="script.js"></script>
 </body>
 </html>
