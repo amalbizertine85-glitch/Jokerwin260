@@ -1,33 +1,144 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<title>Login</title>
+<style>
+    body {
+        background: #0f0f0f;
+        color: white;
+        font-family: Arial;
+        text-align: center;
+        padding-top: 50px;
+    }
+    .box {
+        width: 320px;
+        margin: auto;
+        background: #1c1c1c;
+        padding: 20px;
+        border-radius: 10px;
+    }
+    input {
+        width: 90%;
+        padding: 10px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 6px;
+    }
+    button {
+        width: 95%;
+        padding: 10px;
+        background: #00ff66;
+        border: none;
+        border-radius: 6px;
+        margin-top: 10px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    button:hover { background: #00dd55; }
+</style>
 </head>
+
 <body>
 
-    <img src="joker.png" style="width:180px; display:block; margin:20px auto;">
+<div class="box">
+    <h2>Login</h2>
 
-    <h1 style="text-align:center; color:white;">Login</h1>
+    <input id="username" placeholder="Username">
+    <input id="password" placeholder="Password" type="password">
 
-    <div class="box">
+    <button onclick="login()">Login</button>
+    <button onclick="createAccount()">Create Account</button>
 
-        <h2>Sign In</h2>
-        <input id="username" type="text" placeholder="Username">
-        <input id="password" type="password" placeholder="Password">
-        <a class="btn" onclick="login()">Login</a>
+    <hr style="margin:20px 0;">
 
-        <hr>
+    <button onclick="forceLogin()" style="background:#ff9900;">
+        Admin Enter User (No Password)
+    </button>
+</div>
 
-        <h2>Create Account</h2>
-        <input id="newuser" type="text" placeholder="New Username">
-        <input id="newpass" type="password" placeholder="New Password">
-        <a class="btn" onclick="register()">Create Account</a>
+<script>
+const BIN_ID = "692eeefbae596e708f7e9e72";
+const API_KEY = "$2a$10$hCALb9EdUjLfi38M4RhCMOdm8.1y36yYtLvW0BYdZTfqjpHtlAY7S";
 
-    </div>
+// ------------------ جلب المستخدمين من JSONBin ------------------
+async function getUsers() {
+    let r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+        headers: { "X-Master-Key": API_KEY }
+    });
+    let d = await r.json();
+    return d.record;
+}
 
-    <script src="script.js"></script>
+// ------------------ تسجيل الدخول ------------------
+async function login() {
+    let u = username.value.trim();
+    let p = password.value.trim();
+
+    let users = await getUsers();
+
+    if (!users[u]) {
+        alert("User not found!");
+        return;
+    }
+
+    if (users[u].password !== p) {
+        alert("Wrong password!");
+        return;
+    }
+
+    localStorage.setItem("logged", u);
+    alert("Login successful!");
+    window.location.href = "dashboard.html";
+}
+
+// ------------------ إنشاء حساب ------------------
+async function createAccount() {
+    let u = username.value.trim();
+    let p = password.value.trim();
+
+    if (u === "" || p === "") {
+        alert("Fill all fields!");
+        return;
+    }
+
+    let users = await getUsers();
+
+    if (users[u]) {
+        alert("Username already exists!");
+        return;
+    }
+
+    users[u] = { password: p, balance: 0 };
+
+    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key": API_KEY
+        },
+        body: JSON.stringify(users)
+    });
+
+    alert("Account created!");
+}
+
+// ------------------ دخول الأدمن بدون باسورد لأي حساب ------------------
+async function forceLogin() {
+    let u = username.value.trim();
+
+    let users = await getUsers();
+
+    if (!users[u]) {
+        alert("User not found!");
+        return;
+    }
+
+    localStorage.setItem("logged", u);
+    alert("Admin forced login!");
+    window.location.href = "dashboard.html";
+}
+</script>
 
 </body>
 </html>
