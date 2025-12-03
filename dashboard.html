@@ -1,185 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #111;
-            color: white;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-
-        h2 {
-            margin-top: 10px;
-            color: #0aff0a;
-        }
-
-        .container {
-            max-width: 400px;
-            margin: auto;
-            background: #1a1a1a;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px #00ff00;
-        }
-
-        input {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 5px;
-        }
-
-        button {
-            width: 95%;
-            padding: 10px;
-            margin-top: 10px;
-            background: #00cc00;
-            border: none;
-            color: black;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        button:hover {
-            background: #00ff00;
-        }
-
-        hr {
-            margin: 25px 0;
-            border: 0;
-            height: 1px;
-            background: #333;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+<style>
+    body { background:#004b1f; color:white; font-family:Arial; text-align:center; }
+    .box { background:#013d18; padding:20px; width:90%; margin:20px auto; border-radius:15px; }
+    input, select {
+        width:90%; padding:12px; margin:8px 0; border-radius:10px; border:none; font-size:16px;
+    }
+    button { width:45%; padding:12px; font-size:16px; border:none; border-radius:10px; margin:5px; }
+    .add { background:#ff9d00; color:black; }
+    .withdraw { background:#ff0000; color:white; }
+    .create { background:#00ff62; color:black; width:90%; }
+    table { width:100%; margin-top:20px; color:white; }
+</style>
 </head>
-
 <body>
 
-    <h2>Admin Dashboard</h2>
+<h1>Dashboard</h1>
+<p>Manage users, deposit/withdraw and create accounts</p>
 
-    <div class="container">
+<div class="box">
+    <h3>Select user</h3>
+    <select id="userSelect"></select>
 
-        <h3>Search User</h3>
-        <input id="searchUser" placeholder="Enter username">
-        <button onclick="searchUser()">Search</button>
+    <h3>Amount</h3>
+    <input id="amount" type="number" placeholder="Amount">
 
-        <h3>User Balance</h3>
-        <p id="balance">Balance: -</p>
+    <button class="add" onclick="addBalance()">Add Balance</button>
+    <button class="withdraw" onclick="withdrawBalance()">Withdraw Balance</button>
 
-        <h3>Add Balance</h3>
-        <input id="addAmount" type="number" placeholder="Amount to add">
-        <button onclick="addBalance()">Add Balance</button>
+    <h2>Current Balance</h2>
+    <p id="currentBalance">0.00 TD</p>
+</div>
 
-        <h3>Withdraw Balance</h3>
-        <input id="withdrawAmount" type="number" placeholder="Amount to withdraw">
-        <button onclick="withdrawBalance()">Withdraw</button>
+<div class="box">
+    <h3>Create Account</h3>
+    <input id="newUser" placeholder="Enter username">
+    <button class="create" onclick="createAccount()">Create Account</button>
+</div>
 
-        <hr>
-
-        <!-- 🎉 CREATE ACCOUNT (المطلوب إضافته فقط) -->
-        <h3>Create Account</h3>
-        <input id="newUser" placeholder="New username">
-        <input id="newPass" placeholder="New password" type="password">
-        <button style="background:#ffaa00;" onclick="createAccount()">Create Account</button>
-
-    </div>
-
+<div class="box">
+    <h3>Operations Historique</h3>
+    <table id="historyTable">
+        <tr><th>User</th><th>Type</th><th>Amount</th><th>Date</th></tr>
+    </table>
+</div>
 
 <script>
-// ---- YOUR BIN DATA ----
 const BIN_ID = "692eeefbae596e708f7e9e72";
-const API_KEY = "f535e27148be5fae549d061f3a1959ab0193ad7cfa37a5692d4c38d010c115c6";
+const API_KEY = "$2a$10$hCALb9EdUjLfi38M4RhCMOdm8.1y36yYtLvW0BYdZTfqjpHtlAY7S";
 
-// Load users from JSONBin
 async function loadUsers() {
-    let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
         headers: { "X-Master-Key": API_KEY }
     });
-    let data = await res.json();
-    return data.record;
+    const data = await res.json();
+    const users = data.record;
+
+    let select = document.getElementById("userSelect");
+    select.innerHTML = "";
+
+    for (let u of users) {
+        let opt = document.createElement("option");
+        opt.value = u.username;
+        opt.textContent = u.username;
+        select.appendChild(opt);
+    }
+    updateBalanceDisplay(users);
 }
 
-// Save users to JSONBin
-async function saveUsers(users) {
+async function updateBalanceDisplay(users = null) {
+    if (!users) {
+        const r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+            headers: { "X-Master-Key": API_KEY }
+        });
+        users = (await r.json()).record;
+    }
+
+    let user = document.getElementById("userSelect").value;
+    let found = users.find(u => u.username === user);
+
+    document.getElementById("currentBalance").textContent =
+        found ? found.balance.toFixed(2) + " TD" : "0.00 TD";
+
+    loadHistory(found ? found.history : []);
+}
+
+function loadHistory(history) {
+    let table = document.getElementById("historyTable");
+    table.innerHTML = `<tr><th>User</th><th>Type</th><th>Amount</th><th>Date</th></tr>`;
+    if (!history) return;
+
+    history.forEach(h => {
+        table.innerHTML += `<tr>
+            <td>${h.user}</td>
+            <td>${h.type}</td>
+            <td>${h.amount}</td>
+            <td>${h.date}</td>
+        </tr>`;
+    });
+}
+
+async function saveData(list) {
     await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
             "X-Master-Key": API_KEY
         },
-        body: JSON.stringify(users)
+        body: JSON.stringify(list)
     });
 }
 
-// Search user
-let currentUser = null;
-
-async function searchUser() {
-    let users = await loadUsers();
-    let name = document.getElementById("searchUser").value;
-
-    if (users[name]) {
-        currentUser = name;
-        document.getElementById("balance").innerText = "Balance: " + users[name].balance;
-    } else {
-        alert("User not found!");
-    }
-}
-
-// Add balance
 async function addBalance() {
-    if (!currentUser) return alert("Search for a user first!");
+    let amount = Number(document.getElementById("amount").value);
+    let user = document.getElementById("userSelect").value;
 
-    let amount = Number(document.getElementById("addAmount").value);
-    let users = await loadUsers();
+    if (!amount) return alert("Enter amount");
 
-    users[currentUser].balance += amount;
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+        headers: { "X-Master-Key": API_KEY }
+    });
+    let list = (await res.json()).record;
 
-    await saveUsers(users);
-    searchUser();
+    let u = list.find(x => x.username === user);
+    u.balance += amount;
+    u.history.push({ user, type: "Deposit", amount, date: new Date().toLocaleString() });
+
+    await saveData(list);
+    loadUsers();
 }
 
-// Withdraw balance
 async function withdrawBalance() {
-    if (!currentUser) return alert("Search for a user first!");
+    let amount = Number(document.getElementById("amount").value);
+    let user = document.getElementById("userSelect").value;
 
-    let amount = Number(document.getElementById("withdrawAmount").value);
-    let users = await loadUsers();
+    if (!amount) return alert("Enter amount");
 
-    users[currentUser].balance -= amount;
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+        headers: { "X-Master-Key": API_KEY }
+    });
+    let list = (await res.json()).record;
 
-    await saveUsers(users);
-    searchUser();
+    let u = list.find(x => x.username === user);
+    if (u.balance < amount) return alert("Not enough balance");
+
+    u.balance -= amount;
+    u.history.push({ user, type: "Withdraw", amount, date: new Date().toLocaleString() });
+
+    await saveData(list);
+    loadUsers();
 }
 
-// Create new account
 async function createAccount() {
-    let u = document.getElementById("newUser").value.trim();
-    let p = document.getElementById("newPass").value.trim();
+    let username = document.getElementById("newUser").value;
+    if (!username) return alert("Enter username");
 
-    if (!u || !p) return alert("Fill all fields!");
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+        headers: { "X-Master-Key": API_KEY }
+    });
+    let list = (await res.json()).record;
 
-    let users = await loadUsers();
+    if (list.find(x => x.username === username))
+        return alert("User already exists!");
 
-    if (users[u]) return alert("Username already exists!");
+    list.push({
+        username,
+        balance: 0,
+        history: []
+    });
 
-    users[u] = {
-        password: p,
-        balance: 0
-    };
-
-    await saveUsers(users);
-
-    alert("Account created successfully!");
+    await saveData(list);
+    document.getElementById("newUser").value = "";
+    loadUsers();
+    alert("Account created!");
 }
+
+loadUsers();
 </script>
 
 </body>
