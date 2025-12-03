@@ -1,185 +1,317 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
-<meta charset="UTF-8">
-<title>Dashboard</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dashboard — Jokerwin (Admin)</title>
 <style>
-    body { background:#004b1f; color:white; font-family:Arial; text-align:center; }
-    .box { background:#013d18; padding:20px; width:90%; margin:20px auto; border-radius:15px; }
-    input, select {
-        width:90%; padding:12px; margin:8px 0; border-radius:10px; border:none; font-size:16px;
-    }
-    button { width:45%; padding:12px; font-size:16px; border:none; border-radius:10px; margin:5px; }
-    .add { background:#ff9d00; color:black; }
-    .withdraw { background:#ff0000; color:white; }
-    .create { background:#00ff62; color:black; width:90%; }
-    table { width:100%; margin-top:20px; color:white; }
+  :root{ --bg:#062; --panel:#0a3f18; --panel2:#0f5a23; --accent:#ffb020; --danger:#d33; --ok:#0a8; color-scheme: dark; }
+  body{ margin:0; font-family:Arial, Helvetica, sans-serif; background:var(--bg); color:#fff; }
+  .wrap{ max-width:980px; margin:18px auto; padding:16px; }
+  header{ text-align:center; margin-bottom:12px; }
+  .card{ background:var(--panel); border-radius:12px; padding:14px; box-shadow:0 6px 20px rgba(0,0,0,0.35); }
+  .grid{ display:grid; gap:12px; grid-template-columns: 360px 1fr; }
+  @media(max-width:880px){ .grid{ grid-template-columns: 1fr } }
+  label{ display:block; font-size:13px; color:rgba(255,255,255,0.9); margin-bottom:6px; }
+  select,input{ width:100%; padding:10px; border-radius:8px; border:none; font-size:15px; margin-bottom:8px; box-sizing:border-box; }
+  .controls{ display:flex; gap:8px; }
+  .btn{ padding:10px 12px; border-radius:8px; border:none; cursor:pointer; font-weight:700; }
+  .btn.add{ background:var(--accent); color:#111; flex:1; }
+  .btn.withdraw{ background:var(--danger); color:#fff; flex:1; }
+  .btn.create{ background:#00e676; color:#000; width:100%; margin-top:10px; }
+  .muted{ color:rgba(255,255,255,0.8); font-size:13px; }
+  .users-list{ background:var(--panel2); padding:8px; border-radius:8px; max-height:380px; overflow:auto; }
+  .row{ display:flex; justify-content:space-between; padding:10px; border-radius:6px; margin-bottom:8px; background:rgba(0,0,0,0.08); }
+  .hist-table{ width:100%; border-collapse:collapse; margin-top:8px; font-size:14px; }
+  .hist-table th, .hist-table td{ padding:8px; border-bottom:1px solid rgba(255,255,255,0.06); text-align:left; }
+  .top-stats{ display:flex; gap:8px; margin-bottom:8px; }
+  .stat{ background:rgba(0,0,0,0.12); padding:10px; border-radius:8px; flex:1; text-align:center; }
 </style>
 </head>
 <body>
+  <div class="wrap">
+    <header>
+      <h1>Jokerwin — Admin Dashboard</h1>
+      <div class="muted">Manage users — Dépôt / Retrait — Historique</div>
+    </header>
 
-<h1>Dashboard</h1>
-<p>Manage users, deposit/withdraw and create accounts</p>
+    <div class="grid">
+      <!-- LEFT -->
+      <div>
+        <div class="card">
+          <label for="userSelect">Select user</label>
+          <select id="userSelect"></select>
 
-<div class="box">
-    <h3>Select user</h3>
-    <select id="userSelect"></select>
+          <!-- Create account inside same panel as requested -->
+          <hr style="opacity:0.06;border:none;margin:8px 0">
+          <label>Create new account</label>
+          <input id="new_username" placeholder="Username">
+          <input id="new_password" type="password" placeholder="Password">
+          <input id="new_confirm" type="password" placeholder="Confirm password">
+          <button class="btn create" id="btnCreate">Create Account</button>
 
-    <h3>Amount</h3>
-    <input id="amount" type="number" placeholder="Amount">
+          <hr style="opacity:0.06;border:none;margin:12px 0">
 
-    <button class="add" onclick="addBalance()">Add Balance</button>
-    <button class="withdraw" onclick="withdrawBalance()">Withdraw Balance</button>
+          <label for="amount">Amount</label>
+          <input id="amount" type="number" placeholder="Enter numeric amount">
 
-    <h2>Current Balance</h2>
-    <p id="currentBalance">0.00 TD</p>
-</div>
+          <div class="controls" style="margin-top:8px">
+            <button class="btn add" id="btnAdd">Add Balance</button>
+            <button class="btn withdraw" id="btnWithdraw">Withdraw</button>
+          </div>
 
-<div class="box">
-    <h3>Create Account</h3>
-    <input id="newUser" placeholder="Enter username">
-    <button class="create" onclick="createAccount()">Create Account</button>
-</div>
+          <div style="margin-top:12px" class="muted">Current balance</div>
+          <div id="currentBalance" style="font-size:28px;font-weight:800;margin-top:6px">0.00 TD</div>
+        </div>
 
-<div class="box">
-    <h3>Operations Historique</h3>
-    <table id="historyTable">
-        <tr><th>User</th><th>Type</th><th>Amount</th><th>Date</th></tr>
-    </table>
-</div>
+        <div style="height:12px"></div>
+
+        <div class="card">
+          <div class="muted">Quick search</div>
+          <input id="searchInput" placeholder="Search username or ID">
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button class="btn add" id="btnSearch">SEARCH</button>
+            <button class="btn" id="btnRefresh" style="background:#1b7a1b">REFRESH</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div>
+        <div class="card">
+          <div class="top-stats">
+            <div class="stat"><div class="muted">Clients</div><div id="statClients" style="font-weight:800;font-size:18px">0</div></div>
+            <div class="stat"><div class="muted">Total balance</div><div id="statTotal" style="font-weight:800;font-size:18px">0.00</div></div>
+            <div class="stat"><div class="muted">Total ops</div><div id="statOps" style="font-weight:800;font-size:18px">0</div></div>
+          </div>
+
+          <div style="display:flex;gap:12px">
+            <div style="flex:1">
+              <div class="muted" style="margin-bottom:8px">Users list</div>
+              <div class="users-list" id="usersList"><div class="muted">Loading...</div></div>
+            </div>
+
+            <div style="flex:1;padding-left:12px">
+              <div class="muted">Operations historique</div>
+              <table class="hist-table" id="histTable">
+                <thead><tr><th>User</th><th>Type</th><th>Amount</th><th>Date</th></tr></thead>
+                <tbody id="histBody"><tr><td colspan="4" class="muted">No operations yet</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
 
 <script>
+/* ===== CONFIG (BIN + KEY) ===== */
 const BIN_ID = "692eeefbae596e708f7e9e72";
 const API_KEY = "$2a$10$hCALb9EdUjLfi38M4RhCMOdm8.1y36yYtLvW0BYdZTfqjpHtlAY7S";
+const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
-async function loadUsers() {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-        headers: { "X-Master-Key": API_KEY }
-    });
-    const data = await res.json();
-    const users = data.record;
+/* ===== Helper/utils ===== */
+const el = id => document.getElementById(id);
+const nowStr = ()=> (new Date()).toLocaleString();
+const money = n => Number(n||0).toFixed(2);
 
-    let select = document.getElementById("userSelect");
-    select.innerHTML = "";
+/* ===== Storage shape helpers =====
+   We support two shapes:
+   1) record = { users: { username: {password,balance,history,...}, ... }, history: [...] }
+   2) record = [ { username, password, balance, history:[] }, ... ]
+   We'll normalize to an object usersMap { username -> userObj } for UI, and save back in object form (record.users).
+*/
+async function fetchRecord(){
+  const r = await fetch(`${API_URL}`, { headers: { "X-Master-Key": API_KEY } });
+  if(!r.ok) throw new Error('Fetch failed '+r.status);
+  const j = await r.json();
+  return j.record || j; // some bins may store directly
+}
 
-    for (let u of users) {
-        let opt = document.createElement("option");
-        opt.value = u.username;
-        opt.textContent = u.username;
-        select.appendChild(opt);
+function normalizeToUsersMap(record){
+  // record may be array or object with users
+  if(Array.isArray(record)){
+    const map = {};
+    for(const u of record) map[u.username] = { ...u, history: u.history || [] };
+    return { users: map, history: [] };
+  }
+  // object
+  const users = record.users || record;
+  const hist = record.history || [];
+  const map = {};
+  for(const k of Object.keys(users || {})){
+    map[k] = { ...users[k], history: users[k].history || [] };
+  }
+  return { users: map, history: hist };
+}
+
+function buildRecordForSave(usersMap, globalHistory){
+  // save as { users: {...}, history: [...] }
+  return { users: usersMap, history: globalHistory || [] };
+}
+
+/* ===== Fetch + Save helpers (normalized) ===== */
+async function loadAll(){
+  try{
+    const rec = await fetchRecord();
+    const norm = normalizeToUsersMap(rec);
+    // build global history (merge per-user history + top-level history if present)
+    let globalHistory = norm.history || [];
+    // include per-user histories too (keeps source)
+    for(const uname of Object.keys(norm.users)){
+      const h = norm.users[uname].history || [];
+      // ensure entries include user property
+      h.forEach(e => { if(!e.user) e.user = uname; });
+      globalHistory = globalHistory.concat(h);
+      // keep users' history as-is
     }
-    updateBalanceDisplay(users);
+    return { usersMap: norm.users, history: globalHistory };
+  }catch(e){
+    console.error(e);
+    return { usersMap: {}, history: [] };
+  }
 }
 
-async function updateBalanceDisplay(users = null) {
-    if (!users) {
-        const r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-            headers: { "X-Master-Key": API_KEY }
-        });
-        users = (await r.json()).record;
-    }
-
-    let user = document.getElementById("userSelect").value;
-    let found = users.find(u => u.username === user);
-
-    document.getElementById("currentBalance").textContent =
-        found ? found.balance.toFixed(2) + " TD" : "0.00 TD";
-
-    loadHistory(found ? found.history : []);
+async function saveAll(usersMap, globalHistory){
+  const payload = buildRecordForSave(usersMap, globalHistory);
+  const res = await fetch(`${API_URL}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
+    body: JSON.stringify(payload)
+  });
+  if(!res.ok) throw new Error('Save failed '+res.status);
+  return true;
 }
 
-function loadHistory(history) {
-    let table = document.getElementById("historyTable");
-    table.innerHTML = `<tr><th>User</th><th>Type</th><th>Amount</th><th>Date</th></tr>`;
-    if (!history) return;
+/* ===== UI rendering ===== */
+let CACHE = { users: {}, history: [] };
 
-    history.forEach(h => {
-        table.innerHTML += `<tr>
-            <td>${h.user}</td>
-            <td>${h.type}</td>
-            <td>${h.amount}</td>
-            <td>${h.date}</td>
-        </tr>`;
-    });
+async function refreshUI(){
+  const data = await loadAll();
+  CACHE.users = data.usersMap;
+  CACHE.history = data.history.sort((a,b)=> new Date(b.date) - new Date(a.date));
+  renderUsersSelect();
+  renderUsersList();
+  renderStats();
+  renderHistoryTable();
+  updateCurrentBalance();
 }
 
-async function saveData(list) {
-    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "X-Master-Key": API_KEY
-        },
-        body: JSON.stringify(list)
-    });
+function renderUsersSelect(){
+  const sel = el('userSelect');
+  sel.innerHTML = '';
+  const names = Object.keys(CACHE.users).sort();
+  if(names.length === 0){
+    const opt = document.createElement('option'); opt.text = 'No users'; sel.add(opt); return;
+  }
+  names.forEach(n => { const o = document.createElement('option'); o.value = n; o.text = n; sel.add(o); });
+  sel.onchange = updateCurrentBalance;
 }
 
-async function addBalance() {
-    let amount = Number(document.getElementById("amount").value);
-    let user = document.getElementById("userSelect").value;
-
-    if (!amount) return alert("Enter amount");
-
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-        headers: { "X-Master-Key": API_KEY }
-    });
-    let list = (await res.json()).record;
-
-    let u = list.find(x => x.username === user);
-    u.balance += amount;
-    u.history.push({ user, type: "Deposit", amount, date: new Date().toLocaleString() });
-
-    await saveData(list);
-    loadUsers();
+function renderUsersList(filter=''){
+  const box = el('usersList'); box.innerHTML = '';
+  const names = Object.keys(CACHE.users).sort();
+  const filtered = names.filter(n => n.includes(filter) || n.toLowerCase().includes(filter.toLowerCase()));
+  if(filtered.length === 0){ box.innerHTML = '<div class="muted">No users</div>'; return; }
+  for(const n of filtered){
+    const u = CACHE.users[n];
+    const row = document.createElement('div'); row.className='row';
+    row.innerHTML = `<div><strong>${n}</strong><div class="muted" style="font-size:12px">${u.id ? 'ID: '+u.id : ''}</div></div><div style="font-weight:800">${money(u.balance||0)}</div>`;
+    row.onclick = ()=> { el('userSelect').value = n; updateCurrentBalance(); };
+    box.appendChild(row);
+  }
 }
 
-async function withdrawBalance() {
-    let amount = Number(document.getElementById("amount").value);
-    let user = document.getElementById("userSelect").value;
-
-    if (!amount) return alert("Enter amount");
-
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-        headers: { "X-Master-Key": API_KEY }
-    });
-    let list = (await res.json()).record;
-
-    let u = list.find(x => x.username === user);
-    if (u.balance < amount) return alert("Not enough balance");
-
-    u.balance -= amount;
-    u.history.push({ user, type: "Withdraw", amount, date: new Date().toLocaleString() });
-
-    await saveData(list);
-    loadUsers();
+function renderStats(){
+  el('statClients').innerText = Object.keys(CACHE.users).length;
+  let total = 0; Object.values(CACHE.users).forEach(u => total += Number(u.balance||0));
+  el('statTotal').innerText = money(total);
+  el('statOps').innerText = CACHE.history.length;
 }
 
-async function createAccount() {
-    let username = document.getElementById("newUser").value;
-    if (!username) return alert("Enter username");
-
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-        headers: { "X-Master-Key": API_KEY }
-    });
-    let list = (await res.json()).record;
-
-    if (list.find(x => x.username === username))
-        return alert("User already exists!");
-
-    list.push({
-        username,
-        balance: 0,
-        history: []
-    });
-
-    await saveData(list);
-    document.getElementById("newUser").value = "";
-    loadUsers();
-    alert("Account created!");
+function renderHistoryTable(){
+  const tbody = el('histBody'); tbody.innerHTML = '';
+  if(!CACHE.history || CACHE.history.length === 0){
+    tbody.innerHTML = '<tr><td colspan="4" class="muted">No operations yet</td></tr>'; return;
+  }
+  CACHE.history.slice(0,200).forEach(h => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${h.user}</td><td>${h.type}</td><td>${money(h.amount)}</td><td>${h.date}</td>`;
+    tbody.appendChild(tr);
+  });
 }
 
-loadUsers();
+function updateCurrentBalance(){
+  const sel = el('userSelect');
+  const u = sel.value;
+  if(!u || !CACHE.users[u]) { el('currentBalance').innerText = '0.00 TD'; return; }
+  el('currentBalance').innerText = money(CACHE.users[u].balance||0) + ' TD';
+}
+
+/* ===== Operations: create / add / withdraw ===== */
+async function onCreateAccount(){
+  const username = el('new_username').value.trim();
+  const password = el('new_password').value;
+  const confirm = el('new_confirm').value;
+
+  if(!username || !password) return alert('Fill username and password');
+  if(password !== confirm) return alert("Password and confirm don't match");
+
+  // load fresh
+  const { usersMap, history } = await loadAll();
+  if(usersMap[username]) return alert('Username already exists');
+
+  // create
+  usersMap[username] = { password, balance: 0, history: [] , id: Math.floor(100000 + Math.random()*900000) };
+  // push to global history
+  history.push({ user: username, type: 'create', amount: 0, date: nowStr() });
+
+  await saveAll(usersMap, history);
+
+  // clear form + refresh
+  el('new_username').value = ''; el('new_password').value = ''; el('new_confirm').value = '';
+  await refreshUI();
+  alert('Account created: ' + username);
+}
+
+async function onAddWithdraw(mode){
+  const amt = Number(el('amount').value);
+  const user = el('userSelect').value;
+  if(!user) return alert('Select user first');
+  if(!amt || amt <= 0) return alert('Enter valid amount');
+
+  // load fresh
+  const { usersMap, history } = await loadAll();
+  if(!usersMap[user]) return alert('User not found');
+  if(mode === 'withdraw' && (Number(usersMap[user].balance||0) < amt)) return alert('Not enough balance');
+
+  if(mode === 'add') usersMap[user].balance = Number(usersMap[user].balance||0) + amt;
+  else usersMap[user].balance = Number(usersMap[user].balance||0) - amt;
+
+  // add per-user history and global history
+  const entry = { user, type: mode === 'add' ? 'deposit' : 'withdraw', amount: amt, date: nowStr() };
+  usersMap[user].history = usersMap[user].history || []; usersMap[user].history.push(entry);
+  history.push(entry);
+
+  await saveAll(usersMap, history);
+  el('amount').value = '';
+  await refreshUI();
+  alert((mode==='add' ? 'Added' : 'Withdrawn') + ' ' + money(amt) + ' for ' + user);
+}
+
+/* ===== Event bindings ===== */
+el('btnCreate').addEventListener('click', onCreateAccount);
+el('btnAdd').addEventListener('click', ()=> onAddWithdraw('add'));
+el('btnWithdraw').addEventListener('click', ()=> onAddWithdraw('withdraw'));
+el('btnSearch').addEventListener('click', ()=> { renderUsersList(el('searchInput').value.trim()); });
+el('btnRefresh').addEventListener('click', refreshUI);
+el('userSelect').addEventListener('change', updateCurrentBalance);
+
+/* ===== init ===== */
+(async function init(){ await refreshUI(); })();
+
 </script>
-
 </body>
 </html>
