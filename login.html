@@ -4,139 +4,62 @@
 <meta charset="UTF-8">
 <title>Login</title>
 <style>
-    body {
-        background: #0f0f0f;
-        color: white;
-        font-family: Arial;
-        text-align: center;
-        padding-top: 50px;
-    }
-    .box {
-        width: 320px;
-        margin: auto;
-        background: #1c1c1c;
-        padding: 20px;
-        border-radius: 10px;
-    }
-    input {
-        width: 90%;
-        padding: 10px;
-        margin: 8px 0;
-        border: none;
-        border-radius: 6px;
-    }
-    button {
-        width: 95%;
-        padding: 10px;
-        background: #00ff66;
-        border: none;
-        border-radius: 6px;
-        margin-top: 10px;
-        cursor: pointer;
-        font-weight: bold;
-    }
-    button:hover { background: #00dd55; }
+body {
+    background: #111;
+    color: #fff;
+    font-family: Arial;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.container {
+    background: #222;
+    padding: 20px;
+    width: 300px;
+    border-radius: 10px;
+}
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+}
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background: #0f0;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
 </style>
 </head>
-
 <body>
 
-<div class="box">
-    <h2>Login</h2>
+<div class="container">
+    <h2>Admin Login</h2>
 
-    <input id="username" placeholder="Username">
-    <input id="password" placeholder="Password" type="password">
-
+    <input type="text" id="user" placeholder="Username">
+    <input type="password" id="pass" placeholder="Password">
     <button onclick="login()">Login</button>
-    <button onclick="createAccount()">Create Account</button>
 
-    <hr style="margin:20px 0;">
-
-    <button onclick="forceLogin()" style="background:#ff9900;">
-        Admin Enter User (No Password)
-    </button>
+    <p id="error" style="color:red; margin-top:10px;"></p>
 </div>
 
 <script>
-const BIN_ID = "692eeefbae596e708f7e9e72";
-const API_KEY = "$2a$10$hCALb9EdUjLfi38M4RhCMOdm8.1y36yYtLvW0BYdZTfqjpHtlAY7S";
+function login() {
+    let u = document.getElementById("user").value;
+    let p = document.getElementById("pass").value;
 
-// ------------------ جلب المستخدمين من JSONBin ------------------
-async function getUsers() {
-    let r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-        headers: { "X-Master-Key": API_KEY }
-    });
-    let d = await r.json();
-    return d.record;
-}
-
-// ------------------ تسجيل الدخول ------------------
-async function login() {
-    let u = username.value.trim();
-    let p = password.value.trim();
-
-    let users = await getUsers();
-
-    if (!users[u]) {
-        alert("User not found!");
-        return;
+    if (u === "Bizerte1" && p === "Bizerte101112") {
+        localStorage.setItem("admin", "true");
+        window.location.href = "dashboard.html";
+    } else {
+        document.getElementById("error").innerText = "Wrong username or password";
     }
-
-    if (users[u].password !== p) {
-        alert("Wrong password!");
-        return;
-    }
-
-    localStorage.setItem("logged", u);
-    alert("Login successful!");
-    window.location.href = "dashboard.html";
-}
-
-// ------------------ إنشاء حساب ------------------
-async function createAccount() {
-    let u = username.value.trim();
-    let p = password.value.trim();
-
-    if (u === "" || p === "") {
-        alert("Fill all fields!");
-        return;
-    }
-
-    let users = await getUsers();
-
-    if (users[u]) {
-        alert("Username already exists!");
-        return;
-    }
-
-    users[u] = { password: p, balance: 0 };
-
-    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "X-Master-Key": API_KEY
-        },
-        body: JSON.stringify(users)
-    });
-
-    alert("Account created!");
-}
-
-// ------------------ دخول الأدمن بدون باسورد لأي حساب ------------------
-async function forceLogin() {
-    let u = username.value.trim();
-
-    let users = await getUsers();
-
-    if (!users[u]) {
-        alert("User not found!");
-        return;
-    }
-
-    localStorage.setItem("logged", u);
-    alert("Admin forced login!");
-    window.location.href = "dashboard.html";
 }
 </script>
 
