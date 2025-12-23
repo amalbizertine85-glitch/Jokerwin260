@@ -1,317 +1,152 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Dashboard — Jokerwin (Admin)</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Menu</title>
+
 <style>
-  :root{ --bg:#062; --panel:#0a3f18; --panel2:#0f5a23; --accent:#ffb020; --danger:#d33; --ok:#0a8; color-scheme: dark; }
-  body{ margin:0; font-family:Arial, Helvetica, sans-serif; background:var(--bg); color:#fff; }
-  .wrap{ max-width:980px; margin:18px auto; padding:16px; }
-  header{ text-align:center; margin-bottom:12px; }
-  .card{ background:var(--panel); border-radius:12px; padding:14px; box-shadow:0 6px 20px rgba(0,0,0,0.35); }
-  .grid{ display:grid; gap:12px; grid-template-columns: 360px 1fr; }
-  @media(max-width:880px){ .grid{ grid-template-columns: 1fr } }
-  label{ display:block; font-size:13px; color:rgba(255,255,255,0.9); margin-bottom:6px; }
-  select,input{ width:100%; padding:10px; border-radius:8px; border:none; font-size:15px; margin-bottom:8px; box-sizing:border-box; }
-  .controls{ display:flex; gap:8px; }
-  .btn{ padding:10px 12px; border-radius:8px; border:none; cursor:pointer; font-weight:700; }
-  .btn.add{ background:var(--accent); color:#111; flex:1; }
-  .btn.withdraw{ background:var(--danger); color:#fff; flex:1; }
-  .btn.create{ background:#00e676; color:#000; width:100%; margin-top:10px; }
-  .muted{ color:rgba(255,255,255,0.8); font-size:13px; }
-  .users-list{ background:var(--panel2); padding:8px; border-radius:8px; max-height:380px; overflow:auto; }
-  .row{ display:flex; justify-content:space-between; padding:10px; border-radius:6px; margin-bottom:8px; background:rgba(0,0,0,0.08); }
-  .hist-table{ width:100%; border-collapse:collapse; margin-top:8px; font-size:14px; }
-  .hist-table th, .hist-table td{ padding:8px; border-bottom:1px solid rgba(255,255,255,0.06); text-align:left; }
-  .top-stats{ display:flex; gap:8px; margin-bottom:8px; }
-  .stat{ background:rgba(0,0,0,0.12); padding:10px; border-radius:8px; flex:1; text-align:center; }
+:root{
+  --green:#17b65b;
+  --green-dark:#0e8f46;
+  --bg:#000;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#000;
+  font-family:Arial,Helvetica,sans-serif;
+  color:#fff;
+}
+
+/* HEADER */
+.header{
+  background:var(--green);
+  padding:14px;
+  text-align:center;
+  font-weight:800;
+  font-size:18px;
+  position:relative;
+}
+.header .home{
+  position:absolute;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:18px;
+}
+
+/* USER BAR */
+.user-bar{
+  background:linear-gradient(180deg,var(--green),var(--green-dark));
+  padding:14px;
+  font-weight:700;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+/* SECTION */
+.section{
+  margin:14px;
+}
+
+.btn{
+  width:100%;
+  background:linear-gradient(180deg,#1fd46f,#16a85a);
+  border:none;
+  border-radius:6px;
+  padding:14px;
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+  margin-bottom:10px;
+}
+
+.sub{
+  display:none;
+  background:#0b3d22;
+  border-radius:6px;
+  padding:10px;
+  margin-top:-6px;
+  margin-bottom:10px;
+}
+
+.sub div{
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.sub div:last-child{border-bottom:none}
+
+/* OTHER */
+.other-title{
+  margin:20px 14px 10px;
+  font-weight:800;
+  color:#1fd46f;
+}
+
+.simple-btn{
+  margin:0 14px 10px;
+  background:linear-gradient(180deg,#1fd46f,#16a85a);
+  padding:14px;
+  border-radius:6px;
+  font-weight:700;
+}
 </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <header>
-      <h1>Jokerwin — Admin Dashboard</h1>
-      <div class="muted">Manage users — Dépôt / Retrait — Historique</div>
-    </header>
 
-    <div class="grid">
-      <!-- LEFT -->
-      <div>
-        <div class="card">
-          <label for="userSelect">Select user</label>
-          <select id="userSelect"></select>
+<!-- HEADER -->
+<div class="header">
+  Menu
+  <span class="home">🏠</span>
+</div>
 
-          <!-- Create account inside same panel as requested -->
-          <hr style="opacity:0.06;border:none;margin:8px 0">
-          <label>Create new account</label>
-          <input id="new_username" placeholder="Username">
-          <input id="new_password" type="password" placeholder="Password">
-          <input id="new_confirm" type="password" placeholder="Confirm password">
-          <button class="btn create" id="btnCreate">Create Account</button>
+<!-- USER -->
+<div class="user-bar">
+  <div>hamahamed 12dec • TND</div>
+</div>
 
-          <hr style="opacity:0.06;border:none;margin:12px 0">
+<!-- MAIN -->
+<div class="section">
 
-          <label for="amount">Amount</label>
-          <input id="amount" type="number" placeholder="Enter numeric amount">
-
-          <div class="controls" style="margin-top:8px">
-            <button class="btn add" id="btnAdd">Add Balance</button>
-            <button class="btn withdraw" id="btnWithdraw">Withdraw</button>
-          </div>
-
-          <div style="margin-top:12px" class="muted">Current balance</div>
-          <div id="currentBalance" style="font-size:28px;font-weight:800;margin-top:6px">0.00 TD</div>
-        </div>
-
-        <div style="height:12px"></div>
-
-        <div class="card">
-          <div class="muted">Quick search</div>
-          <input id="searchInput" placeholder="Search username or ID">
-          <div style="display:flex;gap:8px;margin-top:8px;">
-            <button class="btn add" id="btnSearch">SEARCH</button>
-            <button class="btn" id="btnRefresh" style="background:#1b7a1b">REFRESH</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT -->
-      <div>
-        <div class="card">
-          <div class="top-stats">
-            <div class="stat"><div class="muted">Clients</div><div id="statClients" style="font-weight:800;font-size:18px">0</div></div>
-            <div class="stat"><div class="muted">Total balance</div><div id="statTotal" style="font-weight:800;font-size:18px">0.00</div></div>
-            <div class="stat"><div class="muted">Total ops</div><div id="statOps" style="font-weight:800;font-size:18px">0</div></div>
-          </div>
-
-          <div style="display:flex;gap:12px">
-            <div style="flex:1">
-              <div class="muted" style="margin-bottom:8px">Users list</div>
-              <div class="users-list" id="usersList"><div class="muted">Loading...</div></div>
-            </div>
-
-            <div style="flex:1;padding-left:12px">
-              <div class="muted">Operations historique</div>
-              <table class="hist-table" id="histTable">
-                <thead><tr><th>User</th><th>Type</th><th>Amount</th><th>Date</th></tr></thead>
-                <tbody id="histBody"><tr><td colspan="4" class="muted">No operations yet</td></tr></tbody>
-              </table>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
+  <button class="btn" onclick="toggle('cash')">
+    Cash register <span>▾</span>
+  </button>
+  <div class="sub" id="cash">
+    <div>Deposit</div>
+    <div>Withdraw</div>
+    <div>History</div>
   </div>
 
+  <button class="btn" onclick="toggle('arbre')">
+    Arbre <span>▾</span>
+  </button>
+  <div class="sub" id="arbre">
+    <div>My tree</div>
+    <div>Referrals</div>
+  </div>
+
+</div>
+
+<div class="other-title">Other</div>
+
+<div class="simple-btn">Changer langue</div>
+<div class="simple-btn">Changer password</div>
+<div class="simple-btn">Deconnecter</div>
+
 <script>
-/* ===== CONFIG (BIN + KEY) ===== */
-const BIN_ID = "692eeefbae596e708f7e9e72";
-const API_KEY = "$2a$10$hCALb9EdUjLfi38M4RhCMOdm8.1y36yYtLvW0BYdZTfqjpHtlAY7S";
-const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-
-/* ===== Helper/utils ===== */
-const el = id => document.getElementById(id);
-const nowStr = ()=> (new Date()).toLocaleString();
-const money = n => Number(n||0).toFixed(2);
-
-/* ===== Storage shape helpers =====
-   We support two shapes:
-   1) record = { users: { username: {password,balance,history,...}, ... }, history: [...] }
-   2) record = [ { username, password, balance, history:[] }, ... ]
-   We'll normalize to an object usersMap { username -> userObj } for UI, and save back in object form (record.users).
-*/
-async function fetchRecord(){
-  const r = await fetch(`${API_URL}`, { headers: { "X-Master-Key": API_KEY } });
-  if(!r.ok) throw new Error('Fetch failed '+r.status);
-  const j = await r.json();
-  return j.record || j; // some bins may store directly
+function toggle(id){
+  const el = document.getElementById(id);
+  el.style.display = el.style.display === "block" ? "none" : "block";
 }
-
-function normalizeToUsersMap(record){
-  // record may be array or object with users
-  if(Array.isArray(record)){
-    const map = {};
-    for(const u of record) map[u.username] = { ...u, history: u.history || [] };
-    return { users: map, history: [] };
-  }
-  // object
-  const users = record.users || record;
-  const hist = record.history || [];
-  const map = {};
-  for(const k of Object.keys(users || {})){
-    map[k] = { ...users[k], history: users[k].history || [] };
-  }
-  return { users: map, history: hist };
-}
-
-function buildRecordForSave(usersMap, globalHistory){
-  // save as { users: {...}, history: [...] }
-  return { users: usersMap, history: globalHistory || [] };
-}
-
-/* ===== Fetch + Save helpers (normalized) ===== */
-async function loadAll(){
-  try{
-    const rec = await fetchRecord();
-    const norm = normalizeToUsersMap(rec);
-    // build global history (merge per-user history + top-level history if present)
-    let globalHistory = norm.history || [];
-    // include per-user histories too (keeps source)
-    for(const uname of Object.keys(norm.users)){
-      const h = norm.users[uname].history || [];
-      // ensure entries include user property
-      h.forEach(e => { if(!e.user) e.user = uname; });
-      globalHistory = globalHistory.concat(h);
-      // keep users' history as-is
-    }
-    return { usersMap: norm.users, history: globalHistory };
-  }catch(e){
-    console.error(e);
-    return { usersMap: {}, history: [] };
-  }
-}
-
-async function saveAll(usersMap, globalHistory){
-  const payload = buildRecordForSave(usersMap, globalHistory);
-  const res = await fetch(`${API_URL}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
-    body: JSON.stringify(payload)
-  });
-  if(!res.ok) throw new Error('Save failed '+res.status);
-  return true;
-}
-
-/* ===== UI rendering ===== */
-let CACHE = { users: {}, history: [] };
-
-async function refreshUI(){
-  const data = await loadAll();
-  CACHE.users = data.usersMap;
-  CACHE.history = data.history.sort((a,b)=> new Date(b.date) - new Date(a.date));
-  renderUsersSelect();
-  renderUsersList();
-  renderStats();
-  renderHistoryTable();
-  updateCurrentBalance();
-}
-
-function renderUsersSelect(){
-  const sel = el('userSelect');
-  sel.innerHTML = '';
-  const names = Object.keys(CACHE.users).sort();
-  if(names.length === 0){
-    const opt = document.createElement('option'); opt.text = 'No users'; sel.add(opt); return;
-  }
-  names.forEach(n => { const o = document.createElement('option'); o.value = n; o.text = n; sel.add(o); });
-  sel.onchange = updateCurrentBalance;
-}
-
-function renderUsersList(filter=''){
-  const box = el('usersList'); box.innerHTML = '';
-  const names = Object.keys(CACHE.users).sort();
-  const filtered = names.filter(n => n.includes(filter) || n.toLowerCase().includes(filter.toLowerCase()));
-  if(filtered.length === 0){ box.innerHTML = '<div class="muted">No users</div>'; return; }
-  for(const n of filtered){
-    const u = CACHE.users[n];
-    const row = document.createElement('div'); row.className='row';
-    row.innerHTML = `<div><strong>${n}</strong><div class="muted" style="font-size:12px">${u.id ? 'ID: '+u.id : ''}</div></div><div style="font-weight:800">${money(u.balance||0)}</div>`;
-    row.onclick = ()=> { el('userSelect').value = n; updateCurrentBalance(); };
-    box.appendChild(row);
-  }
-}
-
-function renderStats(){
-  el('statClients').innerText = Object.keys(CACHE.users).length;
-  let total = 0; Object.values(CACHE.users).forEach(u => total += Number(u.balance||0));
-  el('statTotal').innerText = money(total);
-  el('statOps').innerText = CACHE.history.length;
-}
-
-function renderHistoryTable(){
-  const tbody = el('histBody'); tbody.innerHTML = '';
-  if(!CACHE.history || CACHE.history.length === 0){
-    tbody.innerHTML = '<tr><td colspan="4" class="muted">No operations yet</td></tr>'; return;
-  }
-  CACHE.history.slice(0,200).forEach(h => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${h.user}</td><td>${h.type}</td><td>${money(h.amount)}</td><td>${h.date}</td>`;
-    tbody.appendChild(tr);
-  });
-}
-
-function updateCurrentBalance(){
-  const sel = el('userSelect');
-  const u = sel.value;
-  if(!u || !CACHE.users[u]) { el('currentBalance').innerText = '0.00 TD'; return; }
-  el('currentBalance').innerText = money(CACHE.users[u].balance||0) + ' TD';
-}
-
-/* ===== Operations: create / add / withdraw ===== */
-async function onCreateAccount(){
-  const username = el('new_username').value.trim();
-  const password = el('new_password').value;
-  const confirm = el('new_confirm').value;
-
-  if(!username || !password) return alert('Fill username and password');
-  if(password !== confirm) return alert("Password and confirm don't match");
-
-  // load fresh
-  const { usersMap, history } = await loadAll();
-  if(usersMap[username]) return alert('Username already exists');
-
-  // create
-  usersMap[username] = { password, balance: 0, history: [] , id: Math.floor(100000 + Math.random()*900000) };
-  // push to global history
-  history.push({ user: username, type: 'create', amount: 0, date: nowStr() });
-
-  await saveAll(usersMap, history);
-
-  // clear form + refresh
-  el('new_username').value = ''; el('new_password').value = ''; el('new_confirm').value = '';
-  await refreshUI();
-  alert('Account created: ' + username);
-}
-
-async function onAddWithdraw(mode){
-  const amt = Number(el('amount').value);
-  const user = el('userSelect').value;
-  if(!user) return alert('Select user first');
-  if(!amt || amt <= 0) return alert('Enter valid amount');
-
-  // load fresh
-  const { usersMap, history } = await loadAll();
-  if(!usersMap[user]) return alert('User not found');
-  if(mode === 'withdraw' && (Number(usersMap[user].balance||0) < amt)) return alert('Not enough balance');
-
-  if(mode === 'add') usersMap[user].balance = Number(usersMap[user].balance||0) + amt;
-  else usersMap[user].balance = Number(usersMap[user].balance||0) - amt;
-
-  // add per-user history and global history
-  const entry = { user, type: mode === 'add' ? 'deposit' : 'withdraw', amount: amt, date: nowStr() };
-  usersMap[user].history = usersMap[user].history || []; usersMap[user].history.push(entry);
-  history.push(entry);
-
-  await saveAll(usersMap, history);
-  el('amount').value = '';
-  await refreshUI();
-  alert((mode==='add' ? 'Added' : 'Withdrawn') + ' ' + money(amt) + ' for ' + user);
-}
-
-/* ===== Event bindings ===== */
-el('btnCreate').addEventListener('click', onCreateAccount);
-el('btnAdd').addEventListener('click', ()=> onAddWithdraw('add'));
-el('btnWithdraw').addEventListener('click', ()=> onAddWithdraw('withdraw'));
-el('btnSearch').addEventListener('click', ()=> { renderUsersList(el('searchInput').value.trim()); });
-el('btnRefresh').addEventListener('click', refreshUI);
-el('userSelect').addEventListener('change', updateCurrentBalance);
-
-/* ===== init ===== */
-(async function init(){ await refreshUI(); })();
-
 </script>
+
 </body>
 </html>
